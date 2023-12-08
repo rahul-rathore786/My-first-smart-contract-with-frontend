@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>CONNECTION TO METAMASK</title>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/web3/1.2.7-rc.0/web3.min.js"></script>
+    <!-- <style>
+        body {
+            background-color: palevioletred;
+            font-size: 33px;
+            text-align: center;
+        }
+
+        button {
+            background-color: aquamarine;
+            font-size: 33px;
+            font-family: Impact, Haettenschweiler, 'Arial Narrow Bold', sans-serif;
+        }
+
+        button:hover {
+            background-color: yellow;
+        }
+    </style> -->
+    <style>
+        body {
+            background-color: #dbb4b4;
+            font-size: 30px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            text-align: center;
+            margin-top: 250px;
+
+            /* Adjust the margin as needed */
+        }
+
+        p {
+            font-size: 24px;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: #fff;
+            font-size: 18px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding: 10px 20px;
+            border: solid black;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease-in-out, transform 0.3s ease-in-out;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.2);
+            /* Adjust the scale factor as needed */
+        }
+    </style>
+
+
+</head>
+
+<body>
+    <button onclick="connectMetamask()">CONNECT TO METAMASK</button> <br>
+    <p id="accountArea"></p>
+    <p id="accountAdd"></p>
+    <button onclick="connectContract()">CONNECT TO CONTRACT</button> <br>
+    <p id="contractArea"></p>
+    <button onclick="readContract()">GET DATA FROM CONTRACT</button> <br>
+    <p id="dataArea"></p>
+</body>
+
+<script>
+    // connect with metamask wallet
+    async function connectMetamask() {
+        if (window.ethereum) {
+            window.web3 = new Web3(ethereum);
+            try {
+                await ethereum.enable();
+                const accounts = await ethereum.request({ method: "eth_requestAccounts" });
+                account = accounts[0];
+                document.getElementById("accountArea").innerHTML = "Connected to Metamask";
+                document.getElementById("accountAdd").innerHTML = "wallet Address is: " + account;
+            } catch (error) {
+                document.getElementById("accountArea").innerHTML = "User denied account access";
+            }
+        } else if (window.web3) {
+            window.web3 = new Web3(web3.currentProvider);
+        } else {
+            document.getElementById("accountArea").innerHTML = "No Metamask detected";
+        }
+    }
+    // connect with contract
+    async function connectContract() {
+        var contractAddress = "0x7F0C0a5A44e78fA63958E10080Ce46e2D1E80FE7";
+        var contractABI = [
+            {
+                "inputs": [],
+                "name": "fund",
+                "outputs": [],
+                "stateMutability": "payable",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "stateMutability": "nonpayable",
+                "type": "constructor"
+            },
+            {
+                "stateMutability": "payable",
+                "type": "fallback"
+            },
+            {
+                "inputs": [],
+                "name": "withdraw",
+                "outputs": [],
+                "stateMutability": "nonpayable",
+                "type": "function"
+            },
+            {
+                "stateMutability": "payable",
+                "type": "receive"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "name": "addressToAmountFunded",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "name": "funders",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "minVal",
+                "outputs": [
+                    {
+                        "internalType": "uint256",
+                        "name": "",
+                        "type": "uint256"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "my_fav",
+                "outputs": [
+                    {
+                        "internalType": "string",
+                        "name": "",
+                        "type": "string"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            },
+            {
+                "inputs": [],
+                "name": "owner",
+                "outputs": [
+                    {
+                        "internalType": "address",
+                        "name": "",
+                        "type": "address"
+                    }
+                ],
+                "stateMutability": "view",
+                "type": "function"
+            }
+        ];
+        // window.web3 = await new web3(window.ethereum);
+        window.contract = new web3.eth.Contract(contractABI, contractAddress);
+        document.getElementById("contractArea").innerHTML = "Connected to Contract";
+    }
+    // read data from contract
+    async function readContract() {
+        var data = await contract.methods.my_fav().call();
+        document.getElementById("dataArea").innerHTML = data;
+    }
+
+
+
+
+
+</script>
+
+</html>
